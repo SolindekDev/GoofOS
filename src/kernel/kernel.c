@@ -1,0 +1,3 @@
+void KERNEL_ENTRY() {
+    
+}
