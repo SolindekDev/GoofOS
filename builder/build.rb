@@ -98,7 +98,7 @@ puts "----------------------------------------------------------"
 puts "[#{builder_goof.magenta}] Compiling kernel c files (.c)..."
 
 files_kernel_c.each do |f|
-    system "#{gcc} #{gcc_flags} #{f} -o #{f.gsub(".c", ".o")}"
+    system "#{gcc} #{gcc_flags} #{f} -o #{f.gsub(".c", ".o")} -I. -I./kernel -I./kernel/sys/ -I./kernel/utils/ -I./kernel/cpu/"
     puts "[#{builder_goof_builder_kernel.magenta}] Compiled #{f}"
 end
 puts "----------------------------------------------------------"
@@ -149,4 +149,25 @@ def emulator_is()
     end
 end 
 
-emulator_is()
+if $os == "Win"
+    puts "[#{"Error".red}] Windows is not supported to build ISO only\n[#{"Error".red}] Linux/Unix/MacOS systems"
+    puts "----------------------------------------------------------"
+    # puts "[#{builder_goof.magenta}] Creating ISO File!"
+    # system "trunc os.bin -s 1200k"
+    # system "mkisofs -r -V Sauce -o goof-iso.iso -b os.bin ."
+    # puts "[#{builder_goof.magenta}] Created ISO File! Output in goof-iso.iso"
+    # puts "----------------------------------------------------------"
+    
+    emulator_is()
+else
+    puts "[#{builder_goof.magenta}] Creating ISO File!"
+    system "truncate os.bin -s 1200k"
+    system "mkisofs -r -V Sauce -o goof-iso.iso -b os.bin ."
+    puts "[#{builder_goof.magenta}] Created ISO File! Output in goof-iso.iso"
+    puts "----------------------------------------------------------"
+
+    emulator_is()
+end
+
+
+

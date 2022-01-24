@@ -14,15 +14,27 @@
 // limitations under the License.
 //
 
-#include "./kernel.h"
+#include "./detect.h"
 
-#include "./screen/video.h"
-#include "./cpu/detect.h"
-#include "./screen/print.h"
-#include "./cpu/cpuid.h"
-#include "./utils/ports.h"
+#include "../utils/ports.h"
+#include "./cpuid.h"
 
-void KERNEL_ENTRY() {
-	set_cursor(4, 2);
-    return;
+#define INTEL_MAGIC_CODE  0x756e6547
+#define AMD_MAGIC_CODE    0x68747541
+
+int detect_cpu_type() {
+    unsigned long ebx, unused;
+	CPUID(0, unused, ebx, unused, unused);
+
+	switch(ebx) {
+		case INTEL_MAGIC_CODE:
+		    return INTEL;
+		break;
+		case AMD_MAGIC_CODE:
+            return AMD;
+		break;
+		default:
+		    return OTHER;
+		break;
+	}
 }

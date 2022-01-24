@@ -14,15 +14,22 @@
 // limitations under the License.
 //
 
-#include "./kernel.h"
+unsigned char inb(unsigned short port) {
+    unsigned char result;
+    __asm__("in %%dx, %%al" : "=a" (result) : "d" (port));
+    return result;
+}
 
-#include "./screen/video.h"
-#include "./cpu/detect.h"
-#include "./screen/print.h"
-#include "./cpu/cpuid.h"
-#include "./utils/ports.h"
+void outb(unsigned short port, unsigned char data) {
+    __asm__("out %%al, %%dx" : : "a" (data), "d" (port));
+}
 
-void KERNEL_ENTRY() {
-	set_cursor(4, 2);
-    return;
+unsigned short inw(unsigned short port) {
+    unsigned short result;
+    __asm__("in %%dx, %%ax" : "=a" (result) : "d" (port));
+    return result;
+}
+
+void outw(unsigned short port, unsigned short data) {
+    __asm__("out %%ax, %%dx" : : "a" (data), "d" (port));
 }

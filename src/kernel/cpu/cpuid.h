@@ -14,15 +14,4 @@
 // limitations under the License.
 //
 
-#include "./kernel.h"
-
-#include "./screen/video.h"
-#include "./cpu/detect.h"
-#include "./screen/print.h"
-#include "./cpu/cpuid.h"
-#include "./utils/ports.h"
-
-void KERNEL_ENTRY() {
-	set_cursor(4, 2);
-    return;
-}
+#define CPUID(in, a, b, c, d) __asm__("cpuid": "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (in))

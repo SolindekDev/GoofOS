@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "ports.h": "c",
+        "detect.h": "c",
+        "video.h": "c",
+        "print.h": "c"
+    }
+}

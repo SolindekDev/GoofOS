@@ -14,15 +14,22 @@
 // limitations under the License.
 //
 
-#include "./kernel.h"
+#include "./print.h"
 
-#include "./screen/video.h"
-#include "./cpu/detect.h"
-#include "./screen/print.h"
-#include "./cpu/cpuid.h"
-#include "./utils/ports.h"
+#include "../utils/ports.h"
+#include "./video.h"
 
-void KERNEL_ENTRY() {
-	set_cursor(4, 2);
-    return;
+void cputs(unsigned char __c, unsigned char forecolour, unsigned char backcolour, int x, int y) {
+    int attrib = (backcolour << 4) | (forecolour & 0x0F);
+    volatile int * where;
+    where = (volatile int *)0xB8000 + (y * 80 + x) ;
+    *where = __c | (attrib << 8);
+}
+
+void print(char* __str) {
+
+}
+
+void println(char* __str) {
+
 }
