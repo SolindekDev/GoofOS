@@ -53,6 +53,13 @@ unsigned long* detect_cpu_type_raw() {
 	return ebx;
 }
 
+void processor_halt()
+{
+    for (;;) {
+        asm volatile("cli; hlt");
+    }
+}
+
 char* detect_cpu_type() {
     unsigned long ebx, unused;
 	cpuid(0, unused, ebx, unused, unused);

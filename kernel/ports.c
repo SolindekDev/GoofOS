@@ -35,3 +35,8 @@ unsigned short inw(unsigned short port) {
 void outw(unsigned short port, unsigned short data) {
     __asm__("out %%ax, %%dx" : : "a" (data), "d" (port));
 }
+
+void out16(unsigned short port, unsigned short value)
+{
+    asm volatile("outw %0, %1" ::"a"(value), "Nd"(port));
+}

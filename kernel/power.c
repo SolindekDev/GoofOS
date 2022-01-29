@@ -18,12 +18,18 @@
 
 #include "./ports.h"
 #include "./screen.h"
+#include "./util.h"
 
 void shutdown() {
     // Shtudown virtual machines
-    outw(0xB004, 0x2000);
-    outw(0xB004, 0x2000);
-    outw(0xB004, 0x2000);
+    better_print("Operating system is shutting down...\n");
+    wait();
+    wait();
+    wait();
+
+    out16(0x604, 0x2000);
+    out16(0xb004, 0x2000);
+    processor_halt();
 
     // Shutdown by BIOS
     extern void sht();

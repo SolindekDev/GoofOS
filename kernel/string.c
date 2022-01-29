@@ -18,6 +18,48 @@
 
 #include "string.h"
 
+void clsstr(char* str) {
+    for (int i = 0; i < strlen(str); i++) {
+        str[i] = '\0';
+    }
+}
+
+char* strtok2(char* str, char splitC) {
+    char* result = "";
+    int r = 0;
+    
+    for (int i = 0; i < strlen(str); i++) {
+        if (str[i] == splitC) {
+            if (r == 0)
+                r++;
+            else
+                break;
+        } else {
+            if (r == 1) {
+                append(result, str[i]);
+            } else {
+                continue;
+            }
+        }
+    }
+
+    return result;
+}
+
+char* strtok(char* str, char splitC) {
+    char* result = "";
+
+    for (int i = 0; i < strlen(str); i++) {
+        if (splitC == str[i]) {
+            break;
+        } else {
+            append(result, str[i]);
+        }
+    }
+
+    return result;
+}
+
 void reverse(char s[]) {
     int c, i, j;
     for (i = 0, j = strlen(s)-1; i < j; i++, j--) {

@@ -32,6 +32,8 @@
 #include "./cpu/cpu.h"
 #include "./cpu/types.h"
 
+#include "fs/gffs/gffs.h"
+
 #define KERNEL_VERSION "1.0.0"
 #define KERNEL_NAME "GoofKernel"
 #define OS_NAME "GoofOS"
@@ -61,6 +63,10 @@ void initializing_kernel() {
     irq_install();
     better_print_color(">>> ", 0x9);
     better_print("Install IRQ \n");
+    wait();
+    init_gffs();
+    better_print_color(">>> ", 0x9);
+    better_print("Initializing File System (GFFS) \n");
     wait();
     keyboard_mode(NONE_MODE);
     better_print_color(">>> ", 0x9);
@@ -96,16 +102,67 @@ void initializing_kernel() {
     return;
 }
 
+char* first;
+
+// typedef struct TOKENS {
+//     char* value;
+// } TOKENS;
+
+// int lexer_tokens_len;
+// TOKENS* tokens;
+
+// TOKENS create_token(char* value) {
+//     TOKENS token;
+//     token.value = value;
+
+//     return token;
+// }
+
+// void lexer(char* msg) {
+//     int space = 0;
+
+//     for (int i = 0; i < strlen(msg); i++) {
+//         if (msg[i] == ' ') {
+//             space+=1;
+//         } else {
+//             if (space == 0) {
+//                 if (lexer_tokens_len-1 == -1) {
+//                     tokens[lexer_tokens_len] = create_token((char*)msg[i]);
+//                     lexer_tokens_len++;
+//                 } else {
+//                     append(tokens[lexer_tokens_len].value, msg[i]);
+//                 }
+//             } else {
+//                 tokens[lexer_tokens_len] = create_token((char*)msg[i]);
+//                 lexer_tokens_len++;
+//                 space-=0;
+//             }
+//         }
+//     }
+// }
+
+int touchR = 0;
+
 void input(char* message) {
-    if (strcmp(message, "clear") == 1) {
+    first = strtok(message, ' ');
+
+    if (strcmp(first, "clear") == 1) {
         clear_screen();
         better_print("\n");
-    } else if (strcmp(message, "reboot") == 1) {
+    } else if (strcmp(first, "reboot") == 1) {
         reboot();
-    }  else if (strcmp(message, "shutdown") == 1) {
+    } else if (strcmp(first, "shutdown") == 1) {
         shutdown();
-    }
+    } else if (strcmp(first, "ls") == 1) {
+        print_files();
+    } else if (strcmp(first, "touch") == 1) {
+        better_print("Give file name!: ");
+        touchR = 1;
+        clsstr(first);
+        return;
+    } 
 
+    clsstr(first);
     prompt();
 }
 
