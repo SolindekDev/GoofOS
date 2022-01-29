@@ -78,4 +78,6 @@ char* read_file(char* filename) {
             return files[i].value;
         }
     }
+
+    return (char*)0x0;
 }

@@ -18,47 +18,86 @@
 
 #include "string.h"
 
+#define NULL ((void *)0)
+
 void clsstr(char* str) {
     for (int i = 0; i < strlen(str); i++) {
         str[i] = '\0';
     }
 }
 
-char* strtok2(char* str, char splitC) {
-    char* result = "";
-    int r = 0;
-    
-    for (int i = 0; i < strlen(str); i++) {
-        if (str[i] == splitC) {
-            if (r == 0)
-                r++;
-            else
-                break;
-        } else {
-            if (r == 1) {
-                append(result, str[i]);
-            } else {
-                continue;
+char* strtok_r(char* str, const char* delim, char** saved_str)
+{
+    if (!str) {
+        if (!saved_str)
+            return NULL;
+        str = *saved_str;
+    }
+
+    unsigned long long token_start = 0;
+    unsigned long long token_end = 0;
+    unsigned long long str_len = strlen(str);
+    unsigned long long delim_len = strlen(delim);
+
+    for (unsigned long long i = 0; i < str_len; ++i) {
+        int is_proper_delim = 0;
+
+        for (unsigned long long j = 0; j < delim_len; ++j) {
+            if (str[i] == delim[j]) {
+                // Skip beginning delimiters
+                if (token_end - token_start == 0) {
+                    ++token_start;
+                    break;
+                }
+
+                is_proper_delim = 1;
             }
         }
-    }
 
-    return result;
-}
-
-char* strtok(char* str, char splitC) {
-    char* result = "";
-
-    for (int i = 0; i < strlen(str); i++) {
-        if (splitC == str[i]) {
+        ++token_end;
+        if (is_proper_delim && token_end > 0) {
+            --token_end;
             break;
-        } else {
-            append(result, str[i]);
         }
     }
 
-    return result;
+    if (str[token_start] == '\0')
+        return NULL;
+
+    if (token_end == 0) {
+        *saved_str = NULL;
+        return &str[token_start];
+    }
+
+    if (str[token_end] == '\0')
+        *saved_str = &str[token_end];
+    else
+        *saved_str = &str[token_end + 1];
+
+    str[token_end] = '\0';
+    return &str[token_start];
 }
+
+// https://pubs.opengroup.org/onlinepubs/9699919799/functions/strtok.html
+char* strtok(char* str, const char* delim)
+{
+    static char* saved_str;
+    return strtok_r(str, delim, &saved_str);
+}
+
+// char* strtok(char* str, char splitC) {
+//     char* result = "";
+
+//     for (int i = 0; i < strlen(str); i++) {
+//         if (splitC == str[i]) {
+//             break;
+//         } else {
+//             append(result, str[i]);
+//         }
+//     }
+
+//     return result;
+// }
 
 void reverse(char s[]) {
     int c, i, j;

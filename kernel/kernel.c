@@ -40,6 +40,8 @@
 #define KERNEL_DATE __DATE__
 #define KERNEL_TIME __TIME__
 
+#define NULL ((void *)0)
+
 void initializing_kernel() {
     outb(0x3d4, 14); 
     int position = inb(0x3d5);
@@ -102,67 +104,44 @@ void initializing_kernel() {
     return;
 }
 
-char* first;
-
-// typedef struct TOKENS {
-//     char* value;
-// } TOKENS;
-
-// int lexer_tokens_len;
-// TOKENS* tokens;
-
-// TOKENS create_token(char* value) {
-//     TOKENS token;
-//     token.value = value;
-
-//     return token;
-// }
-
-// void lexer(char* msg) {
-//     int space = 0;
-
-//     for (int i = 0; i < strlen(msg); i++) {
-//         if (msg[i] == ' ') {
-//             space+=1;
-//         } else {
-//             if (space == 0) {
-//                 if (lexer_tokens_len-1 == -1) {
-//                     tokens[lexer_tokens_len] = create_token((char*)msg[i]);
-//                     lexer_tokens_len++;
-//                 } else {
-//                     append(tokens[lexer_tokens_len].value, msg[i]);
-//                 }
-//             } else {
-//                 tokens[lexer_tokens_len] = create_token((char*)msg[i]);
-//                 lexer_tokens_len++;
-//                 space-=0;
-//             }
-//         }
-//     }
-// }
-
-int touchR = 0;
-
 void input(char* message) {
-    first = strtok(message, ' ');
+    char *token;
+    char *search = " ";
 
-    if (strcmp(first, "clear") == 1) {
+    char* first_arg;
+    char* second_arg;
+
+    token = strtok(message, search);
+    first_arg = token;
+    token = strtok(NULL, search);
+    second_arg = token;
+
+    if (strcmp(first_arg, "clear") == 1) {
         clear_screen();
         better_print("\n");
-    } else if (strcmp(first, "reboot") == 1) {
+    } else if (strcmp(first_arg, "reboot") == 1) {
         reboot();
-    } else if (strcmp(first, "shutdown") == 1) {
+    } else if (strcmp(first_arg, "shutdown") == 1) {
         shutdown();
-    } else if (strcmp(first, "ls") == 1) {
+    } else if (strcmp(first_arg, "ls") == 1) {
         print_files();
-    } else if (strcmp(first, "touch") == 1) {
-        better_print("Give file name!: ");
-        touchR = 1;
-        clsstr(first);
-        return;
-    } 
+    } else if (strcmp(first_arg, "touch") == 1) {
+        if (strcmp(second_arg, "") == 1 || strcmp(second_arg, " ") == 1 || strcmp(second_arg, "help") == 1 || strcmp(second_arg, "h") == 1) {
+            better_print("touch - Builded in GoofOS tool to create files in shell...\n");
+        } else {
+            char* filename;
+            memory_copy(second_arg, filename, strlen(second_arg)+1);
+            int state = create_file(filename);
+            if (state == 0) 
+                better_print("File already exists\n");
+            else
+                better_print_color(second_arg, 0x9);
+                better_print(" file created\n");
+        }
+    }
 
-    clsstr(first);
+    clsstr(first_arg);
+    clsstr(second_arg);
     prompt();
 }
 
