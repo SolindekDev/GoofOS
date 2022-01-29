@@ -1,6 +1,6 @@
 ###### This project is while developing...
 # GoofOS 
-GoofOS is a graphical operating system for x86 computers.
+GoofOS is a text operating system for x86 computers.
 ## About
 This is a 32 bit x86_64 graphical operating system
 Kernel of this system is own writed
@@ -18,7 +18,7 @@ ruby build.rb
 ```
 or if you want you can use python script
 ```shell
-ruby build.py
+py build.py
 ```
 orrr batch
 ```shell
@@ -35,3 +35,4 @@ orrrrrrr shell
 - `qemu-system-x86_64`
 - `nasm`
 - `ruby` *<-- to build os*
+- `python` *<-- to build os*
