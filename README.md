@@ -35,3 +35,4 @@ orrrrrrr shell
 - `qemu-system-x86_64`
 - `nasm`
 - `ruby` *<-- to build os*
+- `python` *<-- to build os*
