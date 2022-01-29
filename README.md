@@ -1,6 +1,6 @@
 ###### This project is while developing...
 # GoofOS 
-GoofOS is a graphical operating system for x86 computers.
+GoofOS is a text operating system for x86 computers.
 ## About
 This is a 32 bit x86_64 graphical operating system
 Kernel of this system is own writed
