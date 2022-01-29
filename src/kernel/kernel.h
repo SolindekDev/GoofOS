@@ -1,1 +1,0 @@
-void KERNEL_ENTRY();
