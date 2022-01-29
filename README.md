@@ -18,7 +18,7 @@ ruby build.rb
 ```
 or if you want you can use python script
 ```shell
-ruby build.py
+py build.py
 ```
 orrr batch
 ```shell
