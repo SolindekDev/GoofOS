@@ -14,7 +14,19 @@ Kernel of this system is own writed
 
 ### To build this OS you need to open cmd in main folder and write this command
 ```shell
-ruby builder/build.rb
+ruby build.rb
+```
+or if you want you can use python script
+```shell
+ruby build.py
+```
+orrr batch
+```shell
+./run.bat
+```
+orrrrrrr shell
+```shell
+./run.sh
 ```
 
 ### To build OS you need this packages:

@@ -50,31 +50,31 @@ void initializing_kernel() {
 
     better_print_color("\n>>> ", 0x9);
     better_print("Running kernel \n");
-    // wait();
+    wait();
     better_print_color(">>> ", 0x9);
     better_print("Init video \n");
-    // wait();
+    wait();
     isr_install();
     better_print_color(">>> ", 0x9);
     better_print("Install ISR \n");
-    // wait();
+    wait();
     irq_install();
     better_print_color(">>> ", 0x9);
     better_print("Install IRQ \n");
-    // wait();
+    wait();
     keyboard_mode(NONE_MODE);
     better_print_color(">>> ", 0x9);
     better_print("Starting keyboard driver \n");
-    // wait();
+    wait();
     floppy_disk_detect();
     better_print_color(">>> ", 0x9);
     better_print("Detecting floppy disks \n");
-    // wait();
+    wait();
     better_print_color(">>> ", 0x9);
     better_print("Detected producer of processor ");
     better_print(detect_cpu_type());
     better_print("\n");
-    // wait();
+    wait();
     better_print_color(">>> ", 0x9);
     better_print("Kernel builded ");
     better_print(KERNEL_DATE);
@@ -85,14 +85,14 @@ void initializing_kernel() {
     better_print("Kernel version ");
     better_print(KERNEL_VERSION);
     better_print("\n");
-    // wait();
+    wait();
     better_print_color(">>> ", 0x9);
     better_print("Initializing shell");
     better_print("\n");
-    // wait();
-    // wait();
-    // wait();
-    // wait();
+    wait();
+    wait();
+    wait();
+    wait();
     return;
 }
 
@@ -128,8 +128,7 @@ void initializing_shell() {
     better_print_color("    MM           6W'   `Wb 6W'   `Wb MM  MM        MM   `YMMNq. \n", 0x9);
     better_print_color("    MM.    `7MMF'8M     M8 8M     M8 MM  MM.      ,MP .     `MM \n", 0x9);
     better_print_color("    `Mb.     MM  YA.   ,A9 YA.   ,A9 MM  `Mb.    ,dP' Mb     dM \n", 0x9);
-    better_print_color("      `\"bmmmdPY   `Ybmd9'   `Ybmd9'.JMML.  `\"bmmd\"'   P\"Ybmmd\"  \n", 0x9);
-                            
+    better_print_color("      `\"bmmmdPY   `Ybmd9'   `Ybmd9'.JMML.  `\"bmmd\"'   P\"Ybmmd\"  \n", 0x9);          
     better_print("\n\n");
 
     prompt();
