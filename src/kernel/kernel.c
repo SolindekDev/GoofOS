@@ -18,11 +18,12 @@
 
 #include "./screen/video.h"
 #include "./cpu/detect.h"
-#include "./screen/print.h"
 #include "./cpu/cpuid.h"
 #include "./utils/ports.h"
+#include "./utils/string.h"
 
 void KERNEL_ENTRY() {
-	set_cursor(4, 2);
+    // clear_screen();
+	kprint("Hello, world!");
     return;
 }

@@ -14,22 +14,16 @@
 // limitations under the License.
 //
 
-#include "./print.h"
+#include "./memory.h"
 
-#include "../utils/ports.h"
-#include "./video.h"
-
-void cputs(unsigned char __c, unsigned char forecolour, unsigned char backcolour, int x, int y) {
-    int attrib = (backcolour << 4) | (forecolour & 0x0F);
-    volatile int * where;
-    where = (volatile int *)0xB8000 + (y * 80 + x) ;
-    *where = __c | (attrib << 8);
+void memory_copy(char *source, char *dest, int nbytes) {
+    int i;
+    for (i = 0; i < nbytes; i++) {
+        *(dest + i) = *(source + i);
+    }
 }
 
-void print(char* __str) {
-
-}
-
-void println(char* __str) {
-
+void memory_set(unsigned char *dest, unsigned char val, unsigned int len) {
+    unsigned char* temp = (unsigned char*)dest;
+    for ( ; len != 0; len--) *temp++ = val;
 }

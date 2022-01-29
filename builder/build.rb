@@ -73,6 +73,7 @@ builder_goof_builder_kernel = "Builder Goof Kernel"
 builder_goof_builder_ld = "Builder Goof Linked"
 
 files_asm = Dir.glob(File.join(bootloader_dir, '**', '*.asm')).select{|file| File.file?(file)}
+# files_asm = ["./src/bootloader/bootloader.asm", "./src/bootloader/kernel_entry.asm"]
 files_kernel_c = Dir.glob(File.join(kernel_dir, '**', '*.c')).select{|file| File.file?(file)}
 files_kernel_asm = Dir.glob(File.join(kernel_dir, '**', '*.asm')).select{|file| File.file?(file)}
 
@@ -93,12 +94,25 @@ files_asm.each do |f|
     end
 end
 
+# puts "----------------------------------------------------------"
+# puts "[#{builder_goof.magenta}] Compiling bootloader (.asm)..."
+
+# files_asm.each do |f|
+#     if f == "./src/bootloader/kernel_entry.asm"
+#         system "#{asm} ./src/bootloader/kernel_entry.asm #{asm_flags_elf} -o ./src/bootloader/kernel_entry.o"
+#         puts "[#{builder_goof_builder_boot.magenta}] Compiled #{f}"
+#     else
+#         system "#{asm} #{f} #{asm_flags_bin} -o #{f.gsub(".asm", ".o")}"
+#         puts "[#{builder_goof_builder_boot.magenta}] Compiled #{f}"
+#     end
+# end
+
 puts "----------------------------------------------------------"
 
 puts "[#{builder_goof.magenta}] Compiling kernel c files (.c)..."
 
 files_kernel_c.each do |f|
-    system "#{gcc} #{gcc_flags} #{f} -o #{f.gsub(".c", ".o")} -I. -I./kernel -I./kernel/sys/ -I./kernel/utils/ -I./kernel/cpu/"
+    system "#{gcc} #{gcc_flags} #{f} -o #{f.gsub(".c", ".o")}"
     puts "[#{builder_goof_builder_kernel.magenta}] Compiled #{f}"
 end
 puts "----------------------------------------------------------"
@@ -120,26 +134,31 @@ files_kernel_asm.each do |f|
     files += f.gsub(".asm", ".o") + " "
 end
 
+# system "#{ld} #{ld_flags_start} ./src/bootloader/kernel_entry.o #{files} #{ld_flags_end}"
 system "#{ld} #{ld_flags_start} ./src/bootloader/entering/kernel_entry.o #{files} #{ld_flags_end}"
-system "#{cat} ./src/bootloader/bootloader.o kernel.bin ./src/bootloader/entering/times.o > os.bin"
+system "#{cat} ./src/bootloader/bootloader.o kernel.bin > os.bin"
 puts "[#{builder_goof_builder_ld.magenta}] Linked kernel. Output in os.bin!"
 puts "----------------------------------------------------------"
+
+def emulate()
+    system "qemu-system-x86_64 -drive format=raw,file=os.bin -d cpu_reset -monitor stdio -m 1G"
+    if $os == "Win"
+        system "cls"
+    else
+        system "clear"
+    end
+    puts "----------------------------------------------------------"
+    puts " "
+    puts "                  #{"Stop emulate the OS...".magenta}"
+    puts " "
+    puts "----------------------------------------------------------"
+end
 
 def emulator_is()
     print "[#{"Builder Goof".magenta}] Do you want to emulate the OS? (Y/N): "
     y = gets().chomp
     if y.downcase() == "y" || y.downcase() == "yes"
-        system "qemu-system-x86_64 -drive format=raw,file=os.bin -d cpu_reset -monitor stdio -m 1G"
-        if $os == "Win"
-            system "cls"
-        else
-            system "clear"
-        end
-        puts "----------------------------------------------------------"
-        puts " "
-        puts "                  #{"Stop emulate the OS...".magenta}"
-        puts " "
-        puts "----------------------------------------------------------"
+        emulate()
     elsif y.downcase() == "n" || y.downcase() == "no"
         puts "[#{"Exit".red}] You don't want to emulate the OS so builder exit.\n"
         exit 1
