@@ -12,6 +12,8 @@
         int saveOnStart;
     };
 
+    void better_print(char* message);
+    void better_print_color(char* message, int type);
     void print(char* message);
     void print_backspace();
     int print_char(char c, int col, int row, char attr);

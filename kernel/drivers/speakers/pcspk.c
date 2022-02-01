@@ -16,35 +16,35 @@
 // 
 // ########################################################################
 
-#include "./ports.h"
-#include "./screen.h"
-#include "./util.h"
+#include "pcspk.h"
 
-void shutdown() {
-    // Shtudown virtual machines
-    better_print("Operating system is shutting down...\n");
-    wait();
-    wait();
-    wait();
+#include "../../ports.h"
+#include "../../util.h"
 
-    out16(0x604, 0x2000);
-    out16(0xb004, 0x2000);
-    processor_halt();
+void pcspk_play_sound(unsigned int nFrequence) {
+    unsigned int Div;
+    unsigned char tmp;
 
-    // Shutdown by BIOS
-    // extern void sht();
-    // better_print_color(">>> ", 0x4);
-    // better_print("Can't shutdown the system.. Trying shutdown it by BIOS\n");
-    // sht();
+    Div = 1193180 / nFrequence;
+    outb(0x43, 0xb6);
+    outb(0x42, (unsigned char) (Div) );
+    outb(0x42, (unsigned char) (Div >> 8));
 
-    better_print_color("\n>>> ", 0x4);
-    better_print("Can't shutdown the system by BIOS.. Please shutdown it manualy\n");
+    tmp = inb(0x61);
+    if (tmp != (tmp | 3)) {
+        outb(0x61, tmp | 3);
+    }
 }
 
-void reboot(){
-    int good = 0x02;
-    while (good & 0x02)
-        good = inb(0x64);
-    outb(0x64, 0xFE);
-    asm volatile("hlt");
+void pcspk_stop_sound() {
+    unsigned char tmp = inb(0x61) & 0xFC;
+
+    outb(0x61, tmp);
+}
+
+void pcspk_beep() {
+    pcspk_play_sound(1000);
+    wait();
+    wait();
+    pcspk_stop_sound();
 }

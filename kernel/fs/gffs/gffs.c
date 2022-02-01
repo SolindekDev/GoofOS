@@ -23,7 +23,7 @@
 #include "gffs.h"
 
 #include "../../screen.h"
-#include "../../mem.h"
+#include "../../util.h"
 
 typedef struct FILE_GFFS {
     char* filename;
@@ -56,7 +56,10 @@ int create_file(char* filename) {
 }
 
 void print_files() {
-    if (file_len == 0) return better_print("There are any files!\n");
+    if (file_len == 0) {
+        better_print("There are any files!\n");
+        return;
+    }
 
     for (int i = 0; i < file_len; i++) {
         better_print(files[i].filename);
@@ -72,12 +75,16 @@ void write_file(char* filename, char* value) {
     }
 }
 
-char* read_file(char* filename) {
+FILE_GFFS find_file(char* filename) {
     for (int i = 0; i < file_len; i++) {
         if (filename == files[i].filename) {
-            return files[i].value;
+            return files[i];
         }
     }
 
-    return (char*)0x0;
+    return;
+}
+
+char* read_file(char* filename) {
+    return find_file(filename).value || "File not found";
 }

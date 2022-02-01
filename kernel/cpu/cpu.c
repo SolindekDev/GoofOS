@@ -46,7 +46,7 @@ void cpuid(int in, unsigned long a, unsigned long b, unsigned long c, unsigned l
 	__asm__("cpuid": "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (in));
 }
 
-unsigned long* detect_cpu_type_raw() {
+unsigned long detect_cpu_type_raw() {
     unsigned long ebx, unused;
 	cpuid(0, unused, ebx, unused, unused);
 

@@ -1,24 +1,105 @@
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/kernel.c -o kernel/kernel.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/ports.c -o kernel/ports.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/screen.c -o kernel/screen.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/string.c -o kernel/string.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/util.c -o kernel/util.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/keyboard.c -o kernel/keyboard.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/disk.c -o kernel/disk.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/mem.c -o kernel/mem.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/power.c -o kernel/power.o"
+# #########################################################################
+#
+#   Copyright 2021 SolindekDev
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# ########################################################################
 
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/cpu/idt.c -o kernel/cpu/idt.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/cpu/isr.c -o kernel/cpu/isr.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/cpu/timer.c -o kernel/cpu/timer.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/cpu/cpu.c -o kernel/cpu/cpu.o"
-system "x86_64-elf-gcc -g -m32 -ffreestanding -c kernel/fs/gffs/gffs.c -o kernel/fs/gffs/gffs.o"
+require 'rbconfig'
 
-system "nasm kernel/cpu/interrupt.asm -felf -o kernel/cpu/interrupt.o"
-system "nasm kernel/shutdown.asm -felf -o kernel/shutdown.o"
+$os = "Other"
 
-system "x86_64-elf-ld -m elf_i386 -o kernel.bin -Ttext 0x1000 boot/kernel_entry.o kernel/shutdown.o kernel/fs/gffs/gffs.o kernel/mem.o kernel/power.o kernel/kernel.o kernel/cpu/cpu.o kernel/cpu/interrupt.o kernel/disk.o kernel/cpu/idt.o kernel/cpu/isr.o kernel/cpu/timer.o kernel/ports.o kernel/screen.o kernel/keyboard.o kernel/util.o kernel/string.o --oformat binary"
+def os()
+  @os ||= (
+    host_os = RbConfig::CONFIG['host_os']
+    case host_os
+    when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
+        $os = "Win"
+    when /darwin|mac os/
+        $os = "MacOS"
+    when /linux/
+        $os = "Linux"
+    when /solaris|bsd/
+        $os = "Unix"
+    else
+        $os = "Other"
+    end
+  )
+end
 
-system "cat boot/mbr.bin kernel.bin > os-image.bin"
+os()
 
-system "qemu-system-x86_64 -drive format=raw,file=os-image.bin,index=0,if=floppy, -m 1G"
+class String
+    def black;          "\033[30m#{self}\033[0m" end
+    def red;            "\033[31m#{self}\033[0m" end
+    def green;          "\033[32m#{self}\033[0m" end
+    def brown;          "\033[33m#{self}\033[0m" end
+    def blue;           "\033[34m#{self}\033[0m" end
+    def magenta;        "\033[35m#{self}\033[0m" end
+    def cyan;           "\033[36m#{self}\033[0m" end
+    def gray;           "\033[37m#{self}\033[0m" end
+end
+
+$script = ""
+
+def add(string_add)
+    $script += string_add + "\n"
+end
+
+asm = "nasm"
+gcc = "x86_64-elf-gcc"
+ld = "x86_64-elf-ld"
+
+gcc_flags = "-g -m32 -ffreestanding -c"
+ld_flags_start = "-m elf_i386 -o kernel.bin -Ttext 0x1000"
+ld_flags_end = "--oformat binary"
+
+bootloader_dir = 'boot/'
+kernel_dir = 'kernel/'
+
+["boot/mbr.asm", "boot/kernel_entry.asm"].each do |file|
+    if file == "boot/kernel_entry.asm"
+        add "nasm -f elf boot/kernel_entry.asm -o boot/kernel_entry.o"
+    else
+        add "nasm -f bin boot/mbr.asm -o boot/mbr.bin"
+    end
+end
+
+Dir.glob(File.join(kernel_dir, '**', '*.c')).select{|file| File.file?(file)}.each do |file|
+    add "#{gcc} #{gcc_flags} #{file} -o #{file.gsub(".c", ".o")}"
+end
+
+Dir.glob(File.join(kernel_dir, '**', '*.asm')).select{|file| File.file?(file)}.each do |file|
+    add "#{asm} #{file} -f elf -o #{file.gsub(".asm", ".o")}"
+end
+
+add "#{ld} #{ld_flags_start} #{Dir.glob(File.join(kernel_dir, '**', '*.o')).select{|file| File.file?(file)}.join(" ")} boot/kernel_entry.o #{ld_flags_end}"
+
+add "cat boot/mbr.bin kernel.bin > os-image.bin"
+add "qemu-system-x86_64 -drive format=raw,file=os-image.bin,index=0,if=floppy, -d cpu_reset -m 2G -soundhw pcspk"
+
+puts $script
+
+# if $os == "Win"
+#     File.open("scripts/run.bat", "w") do |line|
+#         line.puts $script
+#     end
+#     system "./scripts/run.bat"
+# else
+#     File.open("scripts/run.sh", "w") do |line|
+#         line.puts $script
+#     end
+#     system "./scripts/run.sh"
+# end
+

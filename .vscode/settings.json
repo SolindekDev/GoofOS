@@ -3,6 +3,24 @@
         "util.h": "c",
         "types.h": "c",
         "string.h": "c",
-        "utility": "c"
+        "utility": "c",
+        "keyboard.h": "c",
+        "ports.h": "c",
+        "screen.h": "c",
+        "isr.h": "c",
+        "idt.h": "c",
+        "colors.h": "c",
+        "gffs.h": "c",
+        "ata.h": "c",
+        "pcspk.h": "c",
+        "power.h": "c",
+        "syscall.h": "c",
+        "compare": "c",
+        "memory": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "xmemory": "c",
+        "xtr1common": "c",
+        "xutility": "c"
     }
 }

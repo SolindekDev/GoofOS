@@ -16,14 +16,15 @@
 // 
 // ########################################################################
 
-#include "./ports.h"
-#include "./cpu/isr.h"
-#include "./screen.h"
-#include "./cpu/idt.h"
 #include "./keyboard.h"
-#include "./util.h"
-#include "./colors.h"
-#include "./string.h"
+
+#include "../../ports.h"
+#include "../../cpu/isr.h"
+#include "../../screen.h"
+#include "../../cpu/idt.h"
+#include "../../util.h"
+#include "../../colors.h"
+#include "../../string.h"
 
 int shift_pressed = 0;
 int capslock_pressed = 0;

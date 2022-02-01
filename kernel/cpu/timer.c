@@ -17,7 +17,10 @@
 // ########################################################################
 
 #include "timer.h"
+
 #include "isr.h"
+#include "types.h"
+
 #include "../ports.h"
 #include "../util.h"
 

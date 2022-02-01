@@ -16,19 +16,19 @@
 // 
 // ########################################################################
 
-#include "mem.h"
+/*
+    ATA driver
 
-unsigned int free_mem_addr = 0x10000;
+    It helped me a lot:
+        - https://wiki.osdev.org/AHCI
+        - https://github.com/SerenityOS/serenity/tree/33b78915d377dfb950d93f150b8470aea2c1e66f/Kernel/Storage/ATA
+        - https://github.com/torvalds/linux/blob/master/drivers/ata/ahci.c
+        - https://github.com/haiku/haiku/tree/master/src/add-ons/kernel/busses/scsi/ahci
+        - https://github.com/rajesh5310/SBUnix/blob/master/sys/ahci.c
+*/
 
-unsigned int malloc(unsigned int size, int align, unsigned int *phys_addr) {
-    if (align == 1 && (free_mem_addr & 0xFFFFF000)) {
-        free_mem_addr &= 0xFFFFF000;
-        free_mem_addr += 0x1000;
-    }
+#include "./ata.h"
 
-    if (phys_addr) *phys_addr = free_mem_addr;
+#include "../../ports.h"
 
-    unsigned int ret = free_mem_addr;
-    free_mem_addr += size; 
-    return ret;
-}
+/* Soon */

@@ -16,11 +16,17 @@
 // 
 // ########################################################################
 
-#include "isr.h"
-#include "idt.h"
+#include "./isr.h"
+
+#include "./idt.h"
+#include "./timer.h"
+
 #include "../screen.h"
+#include "../ports.h"
 #include "../string.h"
 #include "../util.h"
+
+#include "../drivers/io/keyboard.h"
 
 isr_t interrupt_handlers[256];
 

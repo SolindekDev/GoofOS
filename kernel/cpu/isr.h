@@ -70,7 +70,7 @@ extern void irq15();
 #define NONE_MODE 0x000134
 #define SHELL_MODE 0x000135
 
-typedef struct {
+typedef struct registers_t {
    u32 ds; 
    u32 edi, esi, ebp, esp, ebx, edx, ecx, eax; 
    u32 int_no, err_code; 
